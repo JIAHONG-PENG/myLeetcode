@@ -1,0 +1,56 @@
+.editor-container {
+    padding: 0 10% 0 10%;
+    .question-list {
+        list-style: none;
+        
+
+        li {
+            display: flex;
+            justify-content: space-between;
+
+            cursor: pointer;
+            padding: 2px    ;
+        }
+        li:hover {
+            background-color: lightgray;
+        }
+    }
+
+    .question-container {
+        border: 1px solid black;
+        padding: 20px;
+
+        p {
+            margin: 0;
+        }
+
+        div.line {
+            width: 100%;
+            border-bottom: 1px solid black;
+        }
+    }
+
+    .output {
+        margin-bottom: 150px;
+    }
+
+    .ai-answer-box {
+        border: 1px solid black;
+        min-height: 300px;
+        margin-bottom: 50px;
+        margin-top: 20px;
+        padding: 10px;
+    }
+
+    .pd-0 {
+        padding: 0;
+    }
+
+    button {
+        transition: background-color 0.2s ease-in-out;
+    }
+    
+    button:hover {
+        background-color: lightgray;
+    }
+}
