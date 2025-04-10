@@ -1,29 +1,62 @@
 "use client";
 
 import Editor from "@monaco-editor/react";
-import React, { useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import style from "./page.scss";
 import parse from "html-react-parser";
-import { GoogleGenAI } from "@google/genai";
+import ai from "./getGoogleGenAI";
 
 export default function Home() {
     const [code, setCode] = useState("console.log('Hello World')");
     const [output, setOutput] = useState("");
+
     const [questions, setQuestions] = useState([]);
+    const [currentQuestions, setCurrentQuestions] = useState([]);
+
     const [question, setQuestion] = useState("");
-    const ai = new GoogleGenAI({
-        apiKey: "AIzaSyDLm1SFdlhk6Y0PbWsgmIh6pf48ppGBbYc",
-    });
     const [aiAnswer, setAiAnswer] = useState("");
 
-    // const cutLineBreak = (text) => {
-    //     // for (let n = 5; n > 1; n--) {
-    //     while (text.includes("\n\n\n")) {
-    //         console.log(3);
-    //         text = text.replaceAll("\n\n\n", "\n");
-    //     }
-    //     console.log(text);
-    //     return text;
+    const [pages, setPages] = useState([1]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [maxPage, setMaxPage] = useState(1);
+
+    const inputRef = useRef();
+
+    useEffect(() => {
+        setCurrentQuestions(
+            questions.slice((currentPage - 1) * 20, currentPage * 20)
+        );
+
+        inputRef.current.value = currentPage;
+
+        //     var newPages = [];
+        //     var i = currentPage - 2;
+        //     while (newPages.length < 5) {
+        //         if (i > 0) {
+        //             if (i <= maxPage) {
+        //                 newPages.push(i);
+        //             }
+        //         }
+        //     }
+        //     setPages(newPages);
+    }, [currentPage]);
+
+    useEffect(() => {
+        setCurrentQuestions(
+            questions.slice((currentPage - 1) * 20, currentPage * 20)
+        );
+
+        setMaxPage(Math.ceil(questions.length / 20));
+    }, [questions]);
+
+    // useEffect(() => {
+    //     setMaxPage(Math.ceil(questions / 20));
+    // }, [questions]);
+
+    // const setQuestionsShown = (currentPage) => {
+    //     setCurrentQuestions(
+    //         questions.slice((currentPage - 1) * 20, currentPage * 20)
+    //     );
     // };
 
     const questionOnClickHandler = async (id, event) => {
@@ -76,7 +109,30 @@ export default function Home() {
         setCode(data.output);
     };
 
-    const questionLi = questions.map((q, index) => (
+    const handlePrevOnClick = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const handleNextOnClick = () => {
+        if (currentPage + 1 <= maxPage) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    const handlePageOnSubmit = (event) => {
+        event.preventDefault();
+
+        var inputPage = parseInt(inputRef.current.value);
+        if (inputPage <= maxPage) {
+            setCurrentPage(inputPage);
+        } else {
+            inputRef.current.value = currentPage;
+        }
+    };
+
+    const questionLi = currentQuestions.map((q, index) => (
         <li
             key={index}
             id={parseInt(q.description.split("[")[1].split("]")[0].trim())}
@@ -85,6 +141,7 @@ export default function Home() {
                     parseInt(q.description.split("[")[1].split("]")[0].trim())
                 );
             }}
+            className="page-item"
         >
             <div>{q.description}</div> <div>{q.level}</div>
         </li>
@@ -103,6 +160,7 @@ export default function Home() {
         //     q.includes("✔") ? q : "&nbsp;&nbsp;" + q
         // );
         setQuestions(data.output || data.error);
+        // setQuestionsShown(1);
     };
 
     const askAiButtonOnClick = async () => {
@@ -137,6 +195,46 @@ export default function Home() {
         <div className="editor-container">
             <h2 className="text-center">JavaScript Code Editor</h2>
             <button onClick={handleGetQuestions}>Get questions</button>
+
+            <nav aria-label="Page navigation">
+                <ul className="pagination">
+                    <li
+                        className={`page-item ${
+                            currentPage == 1 ? "disabled" : ""
+                        }`}
+                        onClick={handlePrevOnClick}
+                    >
+                        <div className="page-link" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                            {/* <span className="sr-only">Previous</span> */}
+                        </div>
+                    </li>
+                    <li className="page-item">
+                        <form className="d-flex" onSubmit={handlePageOnSubmit}>
+                            <input
+                                type="number"
+                                min="1"
+                                ref={inputRef}
+                                className="page-link"
+                                defaultValue={currentPage}
+                            />
+                            <button type="submit">Go</button>
+                        </form>
+                    </li>
+                    <li
+                        className={`page-item ${
+                            currentPage == maxPage ? "disabled" : ""
+                        }`}
+                        onClick={handleNextOnClick}
+                    >
+                        <div className="page-link" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                            {/* <span className="sr-only">Next</span> */}
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+
             <ul className="question-list">{questionLi}</ul>
             <div className="question-container">{parse(question)}</div>
             <Editor

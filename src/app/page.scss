@@ -5,6 +5,7 @@
         
 
         li {
+            white-space: pre;
             display: flex;
             justify-content: space-between;
 
@@ -52,5 +53,13 @@
     
     button:hover {
         background-color: lightgray;
+    }
+
+    .page-item {
+        cursor: pointer;
+    }
+
+    .disabled {
+        cursor: unset;
     }
 }

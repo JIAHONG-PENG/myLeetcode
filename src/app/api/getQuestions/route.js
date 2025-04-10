@@ -4,7 +4,8 @@ import { exec } from "child_process";
 export async function GET(res) {
     return new Promise((resolve, reject) => {
         exec(
-            "leetcode list 2>/dev/null | tail -r | sed -n '1,20p'",
+            // "leetcode list 2>/dev/null | tail -r | sed -n '1,20p'",
+            "leetcode list 2>/dev/null | tail -r",
             (error, stdout, stderr) => {
                 if (error) {
                     return resolve(
@@ -24,20 +25,25 @@ export async function GET(res) {
                     .trim()
                     .split("\n")
                     .map((text) => {
-                        const textParts = text
-                            .trim()
-                            .split("    ")
-                            .filter((t) => t !== "");
-
-                        var description = textParts[0];
-
-                        var level = textParts[1];
-                        const levelParts = level.trim().split("(");
-                        level = levelParts[0].trim() + " (" + levelParts[1];
+                        if (text.includes("Easy   (")) {
+                            var textParts = text.split("Easy   (");
+                            var description = textParts[0].trim();
+                            var level = "Easy (" + textParts[1].trim();
+                        } else if (text.includes("Medium (")) {
+                            var textParts = text.split("Medium (");
+                            var description = textParts[0].trim();
+                            var level = "Medium (" + textParts[1].trim();
+                        } else if (text.includes("Hard   (")) {
+                            const textParts = text.split("Hard   (");
+                            var description = textParts[0].trim();
+                            var level = "Hard (" + textParts[1].trim();
+                        } else {
+                            console.log(text);
+                        }
 
                         return { description, level };
                     });
-                console.log(stdout);
+
                 return resolve(
                     new Response(JSON.stringify({ output: stdout }), {
                         status: 200,

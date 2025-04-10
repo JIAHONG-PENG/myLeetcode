@@ -2,7 +2,6 @@ import { exec } from "child_process";
 
 export async function POST(req, res) {
     const data = await req.json();
-    console.log(data.code);
 
     if (data.code) {
         return new Promise((resolve, reject) => {
