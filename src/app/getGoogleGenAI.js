@@ -1,7 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 
-export default function getGoogleGenAI() {
-    return new GoogleGenAI({
-        apiKey: process.env.AI_API_KEY,
-    });
-}
+const ai = new GoogleGenAI({
+    apiKey: process.env.NEXT_PUBLIC_AI_API_KEY,
+});
+
+export default ai;

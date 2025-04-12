@@ -13,6 +13,7 @@
     "@monaco-editor/react": "^4.7.0",
     "bootstrap": "^5.3.5",
     "html-react-parser": "^5.2.3",
+    "leetcode-cli": "^2.6.2",
     "next": "15.2.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
