@@ -99,6 +99,7 @@ export default function Home() {
 
             const data1 = await res1.json();
 
+            setLanguage("javascript");
             setCode(data1.output);
         } else {
             const res2 = await fetch("/api/getSubmission", {
@@ -116,6 +117,7 @@ export default function Home() {
             setCode(data2.output);
 
             var lang = language;
+
             switch (data2.language) {
                 case "python3":
                     lang = "python";
@@ -124,7 +126,7 @@ export default function Home() {
                 default:
                     lang = data2.language;
             }
-            // console.log(lang);
+
             setLanguage(lang);
         }
     };
@@ -205,17 +207,20 @@ export default function Home() {
         }
     };
 
-    const runCode = async () => {
-        // try {
-        //     const logs = [];
-        //     const originalLog = console.log;
-        //     console.log = (...args) => logs.push(args.join(" "));
-        //     eval(code);
-        //     console.log = originalLog;
-        //     setOutput(logs.join("\n"));
-        // } catch (err) {
-        //     setOutput(err.toString());
-        // }
+    const runCode = () => {
+        try {
+            const logs = [];
+            const originalLog = console.log;
+            console.log = (...args) => logs.push(args.join(" "));
+            eval(code);
+            console.log = originalLog;
+            setSubmissionResult(logs.join("\n"));
+        } catch (err) {
+            setSubmissionResult(err.toString());
+        }
+    };
+
+    const submitCode = async () => {
         // send code to backend
         const res = await fetch("/api/submitCode", {
             method: "POST",
@@ -224,14 +229,19 @@ export default function Home() {
         });
 
         const data = await res.json();
-        setSubmissionResult(data.output);
+        const status = res.status;
+
+        if (status === 500) {
+            setSubmissionResult("Error");
+        } else {
+            setSubmissionResult(data.output);
+        }
     };
 
     return (
         <div className="editor-container">
             <h2 className="text-center">JavaScript Code Editor</h2>
             <button onClick={handleGetQuestions}>Get questions</button>
-
             <nav aria-label="Page navigation">
                 <ul className="pagination">
                     <li
@@ -270,12 +280,12 @@ export default function Home() {
                     </li>
                 </ul>
             </nav>
-
             <ul className="question-list">{questionLi}</ul>
             <div className="question-container">{parse(question)}</div>
 
+            <div>{language}</div>
             <Editor
-                height="300px"
+                height="600px"
                 defaultLanguage={"javascript"}
                 language={language}
                 defaultValue={code}
@@ -284,7 +294,8 @@ export default function Home() {
                 theme="vs-dark"
             />
             <button onClick={runCode}>Run</button>
-
+            <br />
+            <button onClick={submitCode}>Submit to LeetCode</button>
             <div className="container-xl pd-0">
                 <br />
                 <div className="row">
