@@ -57,6 +57,18 @@
 
     .page-item {
         cursor: pointer;
+
+        .Easy {
+            color: #1CBABA;
+        }
+
+        .Medium {
+            color:#FFB700;
+        }
+
+        .Hard {
+            color: #F63737;
+        }
     }
 
     .disabled {

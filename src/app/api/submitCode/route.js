@@ -13,59 +13,21 @@ export async function POST(req, res) {
         case "javascript":
             fileExtension = "js";
             lang = "javascript";
-            // codeToSubmit =
-            //     "/*\n" +
-            //     `* @lc app=leetcode id=${questionMeta.id} lang=${lang}\n` +
-            //     "*\n" +
-            //     `* [${questionMeta.id}] ${questionMeta.title}\n` +
-            //     "*/\n\n" +
-            //     "// @lc code=start\n\n" +
-            //     code +
-            //     "\n\n// @lc code=end";
 
             break;
         case "python":
             fileExtension = "py";
             lang = "python3";
-            // codeToSubmit =
-            //     "#\n" +
-            //     `# @lc app=leetcode id=${questionMeta.id} lang=${lang}\n` +
-            //     "#\n" +
-            //     `# [${questionMeta.id}] ${questionMeta.title}\n` +
-            //     "#\n\n" +
-            //     "# @lc code=start\n\n" +
-            //     code +
-            //     "\n\n# @lc code=end";
 
             break;
-
         case "c":
             fileExtension = "c";
             lang = "c";
-            // codeToSubmit =
-            //     "/*\n" +
-            //     `* @lc app=leetcode id=${questionMeta.id} lang=${lang}\n` +
-            //     "*\n" +
-            //     `* [${questionMeta.id}] ${questionMeta.title}\n` +
-            //     "*/\n\n" +
-            //     "// @lc code=start\n\n" +
-            //     code +
-            //     "\n\n// @lc code=end";
 
             break;
-
         default:
             fileExtension = "js";
             lang = "javascript";
-        // codeToSubmit =
-        //     "/*\n" +
-        //     `* @lc app=leetcode id=${questionMeta.id} lang=${lang}\n` +
-        //     "*\n" +
-        //     `* [${questionMeta.id}] ${questionMeta.title}\n` +
-        //     "*/\n\n" +
-        //     "// @lc code=start\n\n" +
-        //     code +
-        //     "\n\n// @lc code=end";
     }
 
     return new Promise((resolve, reject) => {

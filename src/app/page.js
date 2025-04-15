@@ -26,19 +26,21 @@ export default function Home() {
     const inputRef = useRef();
 
     useEffect(() => {
-        setCurrentQuestions(
-            questions.slice((currentPage - 1) * 20, currentPage * 20)
-        );
+        if (Array.isArray(questions)) {
+            setCurrentQuestions(
+                questions.slice((currentPage - 1) * 20, currentPage * 20)
+            );
+        }
 
         inputRef.current.value = currentPage;
     }, [currentPage]);
 
     useEffect(() => {
-        setCurrentQuestions(
-            questions.slice((currentPage - 1) * 20, currentPage * 20)
-        );
-
-        // setMaxPage(Math.ceil(questions.length / 20));
+        if (Array.isArray(questions)) {
+            setCurrentQuestions(
+                questions.slice((currentPage - 1) * 20, currentPage * 20)
+            );
+        }
     }, [questions]);
 
     const questionOnClickHandler = async (id, event) => {
@@ -154,22 +156,27 @@ export default function Home() {
         }
     };
 
-    const questionLi = currentQuestions.map((q, index) => (
-        <li
-            key={index}
-            // id={parseInt(q.description.split("[")[1].split("]")[0].trim())}
-            id={parseInt(q.frontendQuestionId)}
-            onClick={() => {
-                questionOnClickHandler(parseInt(q.frontendQuestionId));
-            }}
-            className="page-item"
-        >
-            <div>{`${q.frontendQuestionId}. ${q.status === "ac" ? "✅" : "x"} ${
-                q.title
-            }`}</div>{" "}
-            <div>{`${q.difficulty} (${q.acRate.toFixed(2)}%)`}</div>
-        </li>
-    ));
+    const questionLi = !Array.isArray(questions)
+        ? questions
+        : currentQuestions.map((q, index) => (
+              <li
+                  key={index}
+                  // id={parseInt(q.description.split("[")[1].split("]")[0].trim())}
+                  id={parseInt(q.frontendQuestionId)}
+                  onClick={() => {
+                      questionOnClickHandler(parseInt(q.frontendQuestionId));
+                  }}
+                  className="page-item"
+              >
+                  <div>{`${q.frontendQuestionId}. ${
+                      q.status === "ac" ? "✅" : "❌"
+                  } ${q.title}`}</div>{" "}
+                  <div>
+                      <span className={q.difficulty}>{`${q.difficulty}`}</span>{" "}
+                      {`(${q.acRate.toFixed(2)}%)`}
+                  </div>
+              </li>
+          ));
 
     const handleGetQuestions = async (event) => {
         const res = await fetch("/api/getQuestions", {
@@ -180,15 +187,13 @@ export default function Home() {
         });
 
         const data = await res.json();
-        // data.output = data.output.map((q) =>
-        //     q.includes("✔") ? q : "&nbsp;&nbsp;" + q
-        // );
-        // setQuestions(data.output || data.error);
+
         if (!data.error) {
             setQuestions(data.questions);
             setMaxPage(Math.ceil(data.total / 20));
         } else {
             console.log(data.error);
+            setQuestions(data.error);
         }
     };
 
@@ -240,7 +245,7 @@ export default function Home() {
 
     return (
         <div className="editor-container">
-            <h2 className="text-center">JavaScript Code Editor</h2>
+            <h2 className="text-center">My LeetCode</h2>
             <button onClick={handleGetQuestions}>Get questions</button>
             <nav aria-label="Page navigation">
                 <ul className="pagination">
