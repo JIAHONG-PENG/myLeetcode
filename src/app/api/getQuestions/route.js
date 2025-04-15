@@ -71,8 +71,7 @@ export async function GET(res) {
             headers: {
                 "Content-Type": "application/json",
                 Referer: "https://leetcode.com/problems",
-                "x-csrftoken":
-                    "OqdYBoA4Ltx9w9Y11bbky6k37DFn3lF3wDWAdTJx8DZGZKH58E7uNDC3rCD9uHac",
+                "x-csrftoken": process.env.X_CSRFTOKEN,
                 Cookie: process.env.COOKIE,
             },
             body: JSON.stringify({
