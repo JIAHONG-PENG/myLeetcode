@@ -86,6 +86,9 @@ export async function GET(res) {
             }),
         });
 
+        // console.log(process.env.X_CSRFTOKEN);
+        // console.log(process.env.COOKIE);
+
         const data = await response.json();
 
         return new Response(JSON.stringify(data.data.problemsetQuestionList), {

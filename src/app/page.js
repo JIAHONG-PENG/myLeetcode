@@ -10,6 +10,7 @@ export default function Home() {
     const [code, setCode] = useState("console.log('Hello World')");
     // const [output, setOutput] = useState("");
 
+    const [username, setUsername] = useState();
     const [questions, setQuestions] = useState([]);
     const [currentQuestions, setCurrentQuestions] = useState([]);
 
@@ -24,6 +25,23 @@ export default function Home() {
     const [language, setLanguage] = useState("javascript");
 
     const inputRef = useRef();
+
+    useEffect(() => {
+        async function authenticate() {
+            const res = await fetch("/api/authUser", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+            const { isSignedIn, username } = await res.json();
+            if (isSignedIn) {
+                setUsername(username);
+            }
+        }
+        authenticate();
+    }, []);
 
     useEffect(() => {
         if (Array.isArray(questions)) {
@@ -191,6 +209,57 @@ export default function Home() {
         if (!data.error) {
             setQuestions(data.questions);
             setMaxPage(Math.ceil(data.total / 20));
+
+            // if (!document.querySelector(".session-form")) {
+            //     let newForm = document.createElement("form");
+            //     // newForm.action = "/api/setSession";
+            //     newForm.setAttribute("method", "POST");
+            //     newForm.classList.add("session-form");
+
+            //     let csrfText = document.createElement("label");
+            //     csrfText.innerHTML = "csrfToken:";
+            //     csrfText.setAttribute("for", "csrfToken");
+
+            //     let cookieText = document.createElement("label");
+            //     cookieText.innerHTML = "cookie:";
+            //     cookieText.setAttribute("for", "cookie");
+
+            //     let csrfInput = document.createElement("input");
+            //     csrfInput.name = "csrfToken";
+
+            //     let cookieInput = document.createElement("input");
+            //     cookieInput.name = "cookie";
+
+            //     let button = document.createElement("button");
+            //     button.type = "submit";
+            //     button.innerHTML = "Submit";
+
+            //     newForm.appendChild(csrfText);
+            //     newForm.appendChild(csrfInput);
+            //     newForm.appendChild(sessionText);
+            //     newForm.appendChild(sessionInput);
+            //     newForm.appendChild(button);
+            //     document
+            //         .querySelector(".editor-container")
+            //         .appendChild(newForm);
+
+            //     newForm.addEventListener("submit", async (event) => {
+            //         event.preventDefault();
+
+            //         const formData = new FormData(newForm);
+
+            //         const res = await fetch("/api/setSession", {
+            //             method: "POST",
+            //             headers: {
+            //                 "Content-Type": "application/json",
+            //             },
+            //             body: JSON.stringify({
+            //                 cookie: formData.get("cookie"),
+            //                 csrfToken: formData.get("csrfToken"),
+            //             }),
+            //         });
+            //     });
+            // }
         } else {
             console.log(data.error);
             setQuestions(data.error);
@@ -245,7 +314,10 @@ export default function Home() {
 
     return (
         <div className="editor-container">
-            <h2 className="text-center">My LeetCode</h2>
+            <div className="heading">
+                <h2 className="text-center">My LeetCode</h2>
+                <div className="username">User: {username || "None"}</div>
+            </div>
             <button onClick={handleGetQuestions}>Get questions</button>
             <nav aria-label="Page navigation">
                 <ul className="pagination">
