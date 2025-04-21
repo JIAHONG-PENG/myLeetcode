@@ -24,6 +24,9 @@ export default function Home() {
     const [submissionResult, setSubmissionResult] = useState("");
     const [language, setLanguage] = useState("javascript");
 
+    const [memoryPercentile, setMemoryPercentile] = useState(0);
+    const [runtimePercentile, setRuntimePercentile] = useState(0);
+
     const inputRef = useRef();
 
     useEffect(() => {
@@ -118,7 +121,8 @@ export default function Home() {
             });
 
             const data1 = await res1.json();
-
+            setRuntimePercentile(0);
+            setMemoryPercentile(0);
             setLanguage("javascript");
             setCode(data1.output);
         } else {
@@ -146,7 +150,8 @@ export default function Home() {
                 default:
                     lang = data2.language;
             }
-
+            setRuntimePercentile(data2.runtimePercentile.toFixed(2));
+            setMemoryPercentile(data2.memoryPercentile.toFixed(2));
             setLanguage(lang);
         }
     };
@@ -370,9 +375,22 @@ export default function Home() {
                 onChange={(value) => setCode(value)}
                 theme="vs-dark"
             />
-            <button onClick={runCode}>Run</button>
             <br />
-            <button onClick={submitCode}>Submit to LeetCode</button>
+            <div className="d-flex justify-content-between">
+                <div>
+                    <button onClick={runCode}>Run</button>
+                    <br />
+                    <button onClick={submitCode}>Submit to LeetCode</button>
+                </div>
+                <div>
+                    <div>
+                        <b>Runtime beats:</b> {runtimePercentile}%
+                    </div>
+                    <div>
+                        <b>Memory beats:</b> {memoryPercentile}%
+                    </div>
+                </div>
+            </div>
             <div className="container-xl pd-0">
                 <br />
                 <div className="row">

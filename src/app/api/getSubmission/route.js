@@ -51,6 +51,8 @@ export async function POST(req) {
         JSON.stringify({
             output: submissionDetails.code,
             language: submissionDetails.lang.name,
+            runtimePercentile: submissionDetails.runtimePercentile,
+            memoryPercentile: submissionDetails.memoryPercentile,
         }),
         { status: 200 }
     );
