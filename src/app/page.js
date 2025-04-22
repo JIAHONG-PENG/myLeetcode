@@ -27,6 +27,8 @@ export default function Home() {
     const [memoryPercentile, setMemoryPercentile] = useState(0);
     const [runtimePercentile, setRuntimePercentile] = useState(0);
 
+    const LANGUAGES = ["javascript", "python", "c"];
+
     const inputRef = useRef();
 
     useEffect(() => {
@@ -63,6 +65,16 @@ export default function Home() {
             );
         }
     }, [questions]);
+
+    const languageOptionList = LANGUAGES.map((lan, index) => (
+        <option value={lan} key={index}>
+            {lan}
+        </option>
+    ));
+
+    function languageOnChangeHandler(event) {
+        setLanguage(event.target.value);
+    }
 
     const questionOnClickHandler = async (id, event) => {
         const questoinSelected = questions[id - 1];
@@ -286,14 +298,30 @@ export default function Home() {
         }
     };
 
-    const runCode = () => {
+    const runCode = async () => {
         try {
-            const logs = [];
-            const originalLog = console.log;
-            console.log = (...args) => logs.push(args.join(" "));
-            eval(code);
-            console.log = originalLog;
-            setSubmissionResult(logs.join("\n"));
+            if (language == "javascript") {
+                const logs = [];
+                const originalLog = console.log;
+                console.log = (...args) => logs.push(args.join(" "));
+                eval(code);
+                console.log = originalLog;
+                setSubmissionResult(logs.join("\n"));
+            } else if (language == "python") {
+                const res = await fetch("/api/runPython", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        code,
+                    }),
+                });
+
+                const data = await res.json();
+                console.log(data);
+                setSubmissionResult(data.output || data.error);
+            }
         } catch (err) {
             setSubmissionResult(err.toString());
         }
@@ -365,12 +393,16 @@ export default function Home() {
             <ul className="question-list">{questionLi}</ul>
             <div className="question-container">{parse(question)}</div>
 
-            <div>{language}</div>
+            <br />
+            <select onChange={languageOnChangeHandler}>
+                {languageOptionList}
+            </select>
+            {/* <div>{language}</div> */}
             <Editor
                 height="600px"
-                defaultLanguage={"javascript"}
+                // defaultLanguage={"javascript"}
                 language={language}
-                defaultValue={code}
+                // defaultValue={code}
                 value={code}
                 onChange={(value) => setCode(value)}
                 theme="vs-dark"
