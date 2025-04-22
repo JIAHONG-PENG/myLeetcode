@@ -226,6 +226,7 @@ export default function Home() {
         if (!data.error) {
             setQuestions(data.questions);
             setMaxPage(Math.ceil(data.total / 20));
+            inputRef.current.value = 1;
 
             // if (!document.querySelector(".session-form")) {
             //     let newForm = document.createElement("form");
@@ -280,6 +281,7 @@ export default function Home() {
         } else {
             console.log(data.error);
             setQuestions(data.error);
+            inputRef.current.value = 1;
         }
     };
 
