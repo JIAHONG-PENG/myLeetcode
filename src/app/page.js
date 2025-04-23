@@ -28,6 +28,7 @@ export default function Home() {
     const [runtimePercentile, setRuntimePercentile] = useState(0);
 
     const LANGUAGES = ["javascript", "python", "c++"];
+    const Question_STATUS = "SOLVED";
 
     const inputRef = useRef();
 
@@ -119,7 +120,7 @@ export default function Home() {
         });
         setQuestion(data.output);
 
-        if (questoinSelected.status !== "ac") {
+        if (questoinSelected.status !== Question_STATUS) {
             const res1 = await fetch("/api/showQuestion", {
                 method: "POST",
                 headers: {
@@ -197,14 +198,14 @@ export default function Home() {
               <li
                   key={index}
                   // id={parseInt(q.description.split("[")[1].split("]")[0].trim())}
-                  id={parseInt(q.frontendQuestionId)}
+                  id={parseInt(q.questionFrontendId)}
                   onClick={() => {
-                      questionOnClickHandler(parseInt(q.frontendQuestionId));
+                      questionOnClickHandler(parseInt(q.questionFrontendId));
                   }}
                   className="page-item"
               >
-                  <div>{`${q.frontendQuestionId}. ${
-                      q.status === "ac" ? "✅" : "❌"
+                  <div>{`${q.questionFrontendId}. ${
+                      q.status === Question_STATUS ? "✅" : "❌"
                   } ${q.title}`}</div>{" "}
                   <div>
                       <span className={q.difficulty}>{`${q.difficulty}`}</span>{" "}
@@ -225,7 +226,7 @@ export default function Home() {
 
         if (!data.error) {
             setQuestions(data.questions);
-            setMaxPage(Math.ceil(data.total / 20));
+            setMaxPage(Math.ceil(data.questions.length / 20));
             inputRef.current.value = 1;
 
             // if (!document.querySelector(".session-form")) {
@@ -356,9 +357,9 @@ export default function Home() {
             </div>
 
             <section id="questions">
-                <h3 className="underline">Questions</h3>
+                <h3 className="underline">Question List</h3>
                 <button onClick={handleGetQuestions}>Get questions</button>
-                <nav aria-label="Page navigation">
+                <nav aria-label="Page navigation" className="page-navigation">
                     <ul className="pagination">
                         <li
                             className={`page-item ${
@@ -380,10 +381,12 @@ export default function Home() {
                                     type="number"
                                     min="1"
                                     ref={inputRef}
-                                    className="page-link"
+                                    className="page-link no-spinner"
                                     defaultValue={currentPage}
                                 />
-                                <button type="submit">Go</button>
+                                <button type="submit" className="">
+                                    Go
+                                </button>
                             </form>
                         </li>
                         <li

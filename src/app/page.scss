@@ -1,19 +1,31 @@
+// $Accent-color: #3cb371;
+$Border-color: #cfc9b6;
+$Button-color: #eae6d8;
+$Button-color-hover: #ddb892;
+$color: black;
+$Background-color: #f5f3e7;
+$Sub-background-color: #eae6d8;
+
 .editor-container {
     position: relative;
-    padding: 0 10% 0 10%;
+    // padding: 0 2% 0 2%;
+    margin: 0 10% 0 10%;
+    border: 2px solid $Border-color;
+    background-color: $Sub-background-color;
 
-    h2, h3 {
-        text-shadow: 2px 2px lightgray;
-    }
+
+    // h2, h3 {
+    //     text-shadow: 2px 2px lightgray;
+    // }
 
     .underline {
-        border-bottom: 2px black solid;
+        border-bottom: 2px $Border-color solid;
     }
 
-    button, .page-link, select {
-        box-shadow: 2px 2px black;
-        color: black;
-    }
+    // button, .page-link, select {
+    //     box-shadow: 2px 2px black;
+    //     color: black;
+    // }
 
     .heading {
         position: relative;
@@ -40,7 +52,21 @@
             padding: 2px    ;
         }
         li:hover {
-            background-color: lightgray;
+            // background-color: lightgray;
+            background-color: #4a3f35;
+            color: $Background-color;
+        }
+
+        .EASY {
+            color: #78c6c6;
+        }
+
+        .MEDIUM {
+            color:#e0b347;
+        }
+
+        .HARD {
+            color: #d46a6a;
         }
     }
 
@@ -54,7 +80,7 @@
 
         div.line {
             width: 100%;
-            border-bottom: 1px solid black;
+            border-bottom: 1px solid $Border-color;
         }
     }
 
@@ -63,7 +89,7 @@
     }
 
     .ai-answer-box {
-        border: 1px solid black;
+        border: 1px solid $Border-color;
         min-height: 300px;
         margin-bottom: 50px;
         margin-top: 20px;
@@ -76,29 +102,39 @@
 
     button {
         transition: background-color 0.2s ease-in-out;
+        background-color: $Button-color;
+
+        &:hover {
+            background-color: $Button-color-hover;
+        }
+
+        &.no-border {
+            border: none;
+        }
     }
-    
-    button:hover {
-        background-color: lightgray;
-    }
 
-    .page-item {
-        cursor: pointer;
-
-        .Easy {
-            color: #1CBABA;
+    .page-navigation {
+        .pagination {
+            justify-content: center;
         }
+        
+        .page-item {
+            cursor: pointer;
 
-        .Medium {
-            color:#FFB700;
-        }
+            input {
+                width: 50px;
+                padding: 6px;
+                text-align: center;
+            }
 
-        .Hard {
-            color: #F63737;
-        }
+            .page-link, button {
+                background-color: $Sub-background-color;
+                border: 1px solid $Border-color;
+            }
 
-        input {
-            width: 80px;
+            span, input {
+                color: $color;
+            }
         }
     }
 
@@ -107,7 +143,7 @@
     }
 
     .session-form {
-        border: 1px solid black;
+        border: 1px solid $Border-color;
         position: fixed;
         top: 50%;
         left: 50%;
@@ -115,5 +151,19 @@
         background-color: white;   
         padding: 50px;
         z-index: 100;
+    }
+
+    .no-spinner::-webkit-outer-spin-button,
+    .no-spinner::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    .no-spinner {
+        -moz-appearance: textfield;
+    }
+
+    select {
+        background-color: $Sub-background-color;
     }
 }

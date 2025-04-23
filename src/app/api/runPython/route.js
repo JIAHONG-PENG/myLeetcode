@@ -16,6 +16,8 @@ export async function POST(req) {
             { timeout: 5000 },
             (error, stdout, stderr) => {
                 if (error) {
+                    fs.unlinkSync(filePath);
+
                     return resolve(
                         new Response(JSON.stringify({ error: error.message }), {
                             status: 500,
@@ -23,6 +25,8 @@ export async function POST(req) {
                     );
                 }
                 if (stderr) {
+                    fs.unlinkSync(filePath);
+
                     return resolve(
                         new Response(JSON.stringify({ error: stderr }), {
                             status: 500,

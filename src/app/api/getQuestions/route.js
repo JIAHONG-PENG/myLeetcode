@@ -64,6 +64,102 @@ import { exec } from "child_process";
 //     });
 // }
 
+const graphql = {
+    operationName: "problemsetQuestionList",
+    variables: {
+        categorySlug: "all-code-essentials",
+        skip: 0,
+        // limit: 2,
+        filters: {},
+    },
+    query: " query problemsetQuestionList($categorySlug: String, $limit: Int, $skip: Int, $filters: QuestionListFilterInput) {  problemsetQuestionList: questionList(    categorySlug: $categorySlug    limit: $limit    skip: $skip    filters: $filters  ) {    total: totalNum    questions: data {      acRate   difficulty  frontendQuestionId: questionFrontendId     paidOnly: isPaidOnly      status      title      titleSlug   }  } }   ",
+};
+
+const graphqlV2 = {
+    query: "    query problemsetQuestionListV2($filters: QuestionFilterInput, $limit: Int, $searchKeyword: String, $skip: Int, $sortBy: QuestionSortByInput, $categorySlug: String) {  problemsetQuestionListV2(    filters: $filters    limit: $limit    searchKeyword: $searchKeyword    skip: $skip    sortBy: $sortBy    categorySlug: $categorySlug  ) {    questions {      id      titleSlug      title      translatedTitle      questionFrontendId      paidOnly      difficulty      topicTags {        name        slug        nameTranslated      }      status      isInMyFavorites      frequency      acRate    }    totalLength    finishedLength    hasMore  }}    ",
+    variables: {
+        skip: 0,
+        limit: 100,
+        categorySlug: "all-code-essentials",
+        filters: {
+            filterCombineType: "ALL",
+            statusFilter: {
+                questionStatuses: [],
+                operator: "IS",
+            },
+            difficultyFilter: {
+                difficulties: [],
+                operator: "IS",
+            },
+            languageFilter: {
+                languageSlugs: [],
+                operator: "IS",
+            },
+            topicFilter: {
+                topicSlugs: [],
+                operator: "IS",
+            },
+            acceptanceFilter: {},
+            frequencyFilter: {},
+            lastSubmittedFilter: {},
+            publishedFilter: {},
+            companyFilter: {
+                companySlugs: [],
+                operator: "IS",
+            },
+            positionFilter: {
+                positionSlugs: [],
+                operator: "IS",
+            },
+            premiumFilter: {
+                premiumStatus: [],
+                operator: "IS",
+            },
+        },
+        searchKeyword: "",
+        sortBy: {
+            sortField: "CUSTOM",
+            sortOrder: "ASCENDING",
+        },
+        filtersV2: {
+            filterCombineType: "ALL",
+            statusFilter: {
+                questionStatuses: [],
+                operator: "IS",
+            },
+            difficultyFilter: {
+                difficulties: [],
+                operator: "IS",
+            },
+            languageFilter: {
+                languageSlugs: [],
+                operator: "IS",
+            },
+            topicFilter: {
+                topicSlugs: [],
+                operator: "IS",
+            },
+            acceptanceFilter: {},
+            frequencyFilter: {},
+            lastSubmittedFilter: {},
+            publishedFilter: {},
+            companyFilter: {
+                companySlugs: [],
+                operator: "IS",
+            },
+            positionFilter: {
+                positionSlugs: [],
+                operator: "IS",
+            },
+            premiumFilter: {
+                premiumStatus: [],
+                operator: "IS",
+            },
+        },
+    },
+    operationName: "problemsetQuestionListV2",
+};
+
 export async function GET(res) {
     try {
         const response = await fetch("https://leetcode.com/graphql", {
@@ -74,16 +170,7 @@ export async function GET(res) {
                 "x-csrftoken": process.env.X_CSRFTOKEN,
                 Cookie: process.env.COOKIE,
             },
-            body: JSON.stringify({
-                operationName: "problemsetQuestionList",
-                variables: {
-                    categorySlug: "all-code-essentials",
-                    skip: 0,
-                    // limit: 2,
-                    filters: {},
-                },
-                query: " query problemsetQuestionList($categorySlug: String, $limit: Int, $skip: Int, $filters: QuestionListFilterInput) {  problemsetQuestionList: questionList(    categorySlug: $categorySlug    limit: $limit    skip: $skip    filters: $filters  ) {    total: totalNum    questions: data {      acRate   difficulty  frontendQuestionId: questionFrontendId     paidOnly: isPaidOnly      status      title      titleSlug   }  } }   ",
-            }),
+            body: JSON.stringify(graphqlV2),
         });
 
         // console.log(process.env.X_CSRFTOKEN);
@@ -91,9 +178,12 @@ export async function GET(res) {
 
         const data = await response.json();
 
-        return new Response(JSON.stringify(data.data.problemsetQuestionList), {
-            status: 200,
-        });
+        return new Response(
+            JSON.stringify(data.data.problemsetQuestionListV2),
+            {
+                status: 200,
+            }
+        );
     } catch (error) {
         return new Response(JSON.stringify({ error: error.message }), {
             status: 500,
