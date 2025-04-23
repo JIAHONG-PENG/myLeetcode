@@ -2,6 +2,19 @@
     position: relative;
     padding: 0 10% 0 10%;
 
+    h2, h3 {
+        text-shadow: 2px 2px lightgray;
+    }
+
+    .underline {
+        border-bottom: 2px black solid;
+    }
+
+    button, .page-link, select {
+        box-shadow: 2px 2px black;
+        color: black;
+    }
+
     .heading {
         position: relative;
 
@@ -13,6 +26,8 @@
     }
 
     .question-list {
+        // background: white;
+        // border: 1px solid black;
         list-style: none;
         
 
@@ -30,7 +45,7 @@
     }
 
     .question-container {
-        border: 1px solid black;
+        // border: 1px solid black;
         padding: 20px;
 
         p {

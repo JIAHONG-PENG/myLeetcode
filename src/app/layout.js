@@ -1,5 +1,5 @@
 // // import { Geist, Geist_Mono } from "next/font/google";
-// // import "./globals.css";
+// import "./globals.scss";
 
 import Head from "next/head";
 import "bootstrap/dist/css/bootstrap.min.css";

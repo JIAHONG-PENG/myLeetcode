@@ -27,7 +27,7 @@ export default function Home() {
     const [memoryPercentile, setMemoryPercentile] = useState(0);
     const [runtimePercentile, setRuntimePercentile] = useState(0);
 
-    const LANGUAGES = ["javascript", "python", "c"];
+    const LANGUAGES = ["javascript", "python", "c++"];
 
     const inputRef = useRef();
 
@@ -323,6 +323,7 @@ export default function Home() {
                 const data = await res.json();
                 console.log(data);
                 setSubmissionResult(data.output || data.error);
+            } else if (language == "c++") {
             }
         } catch (err) {
             setSubmissionResult(err.toString());
@@ -353,91 +354,108 @@ export default function Home() {
                 <h2 className="text-center">My LeetCode</h2>
                 <div className="username">User: {username || "None"}</div>
             </div>
-            <button onClick={handleGetQuestions}>Get questions</button>
-            <nav aria-label="Page navigation">
-                <ul className="pagination">
-                    <li
-                        className={`page-item ${
-                            currentPage == 1 ? "disabled" : ""
-                        }`}
-                        onClick={handlePrevOnClick}
-                    >
-                        <div className="page-link" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                            {/* <span className="sr-only">Previous</span> */}
-                        </div>
-                    </li>
-                    <li className="page-item">
-                        <form className="d-flex" onSubmit={handlePageOnSubmit}>
-                            <input
-                                type="number"
-                                min="1"
-                                ref={inputRef}
-                                className="page-link"
-                                defaultValue={currentPage}
-                            />
-                            <button type="submit">Go</button>
-                        </form>
-                    </li>
-                    <li
-                        className={`page-item ${
-                            currentPage == maxPage ? "disabled" : ""
-                        }`}
-                        onClick={handleNextOnClick}
-                    >
-                        <div className="page-link" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                            {/* <span className="sr-only">Next</span> */}
-                        </div>
-                    </li>
-                </ul>
-            </nav>
-            <ul className="question-list">{questionLi}</ul>
-            <div className="question-container">{parse(question)}</div>
 
+            <section id="questions">
+                <h3 className="underline">Questions</h3>
+                <button onClick={handleGetQuestions}>Get questions</button>
+                <nav aria-label="Page navigation">
+                    <ul className="pagination">
+                        <li
+                            className={`page-item ${
+                                currentPage == 1 ? "disabled" : ""
+                            }`}
+                            onClick={handlePrevOnClick}
+                        >
+                            <div className="page-link" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                                {/* <span className="sr-only">Previous</span> */}
+                            </div>
+                        </li>
+                        <li className="page-item">
+                            <form
+                                className="d-flex"
+                                onSubmit={handlePageOnSubmit}
+                            >
+                                <input
+                                    type="number"
+                                    min="1"
+                                    ref={inputRef}
+                                    className="page-link"
+                                    defaultValue={currentPage}
+                                />
+                                <button type="submit">Go</button>
+                            </form>
+                        </li>
+                        <li
+                            className={`page-item ${
+                                currentPage == maxPage ? "disabled" : ""
+                            }`}
+                            onClick={handleNextOnClick}
+                        >
+                            <div className="page-link" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                                {/* <span className="sr-only">Next</span> */}
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+
+                <ul className="question-list">{questionLi}</ul>
+            </section>
+
+            <section id="question-detail">
+                <h3 className="underline">Question Details</h3>
+                <div className="question-container">{parse(question)}</div>
+            </section>
             <br />
-            <select onChange={languageOnChangeHandler}>
-                {languageOptionList}
-            </select>
-            {/* <div>{language}</div> */}
-            <Editor
-                height="600px"
-                // defaultLanguage={"javascript"}
-                language={language}
-                // defaultValue={code}
-                value={code}
-                onChange={(value) => setCode(value)}
-                theme="vs-dark"
-            />
-            <br />
-            <div className="d-flex justify-content-between">
-                <div>
-                    <button onClick={runCode}>Run</button>
-                    <br />
-                    <button onClick={submitCode}>Submit to LeetCode</button>
-                </div>
-                <div>
-                    <div>
-                        <b>Runtime beats:</b> {runtimePercentile}%
-                    </div>
-                    <div>
-                        <b>Memory beats:</b> {memoryPercentile}%
-                    </div>
-                </div>
-            </div>
-            <div className="container-xl pd-0">
+
+            <section id="editor">
+                <h3 className="underline">Code Editor</h3>
+                <select onChange={languageOnChangeHandler} className="mb-3">
+                    {languageOptionList}
+                </select>
+                {/* <div>{language}</div> */}
+                <Editor
+                    height="600px"
+                    // defaultLanguage={"javascript"}
+                    language={language}
+                    // defaultValue={code}
+                    value={code}
+                    onChange={(value) => setCode(value)}
+                    theme="vs-dark"
+                />
+
                 <br />
-                <div className="row">
-                    <div className="col-md-6 col-12">
-                        <h4>Output:</h4>
-                        <pre className="output">{submissionResult}</pre>
+
+                <div className="d-flex justify-content-between">
+                    <div>
+                        <button onClick={runCode}>Run</button>
+                        <br />
+                        <button onClick={submitCode}>Submit to LeetCode</button>
                     </div>
-                    <div className="col-md-6 col-12">
-                        <button onClick={askAiButtonOnClick}>Ask AI</button>
-                        <div className="ai-answer-box">{aiAnswer}</div>
+                    <div>
+                        <div>
+                            <b>Runtime beats:</b> {runtimePercentile}%
+                        </div>
+                        <div>
+                            <b>Memory beats:</b> {memoryPercentile}%
+                        </div>
                     </div>
                 </div>
-            </div>
+                <div className="container-xl pd-0">
+                    <br />
+                    <div className="row">
+                        <div className="col-md-6 col-12">
+                            <h4>Output:</h4>
+                            <pre className="output">{submissionResult}</pre>
+                        </div>
+                        <div className="col-md-6 col-12">
+                            <button onClick={askAiButtonOnClick}>Ask AI</button>
+                            <div className="ai-answer-box">{aiAnswer}</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
     );
 }
