@@ -28,9 +28,10 @@ export default function Home() {
     const [runtimePercentile, setRuntimePercentile] = useState(0);
 
     const LANGUAGES = ["javascript", "python", "c++"];
-    const Question_STATUS = "SOLVED";
+    const SOLVED_STATUS = "SOLVED";
 
     const inputRef = useRef();
+    const languageSelectRef = useRef();
 
     useEffect(() => {
         async function authenticate() {
@@ -120,7 +121,7 @@ export default function Home() {
         });
         setQuestion(data.output);
 
-        if (questoinSelected.status !== Question_STATUS) {
+        if (questoinSelected.status !== SOLVED_STATUS) {
             const res1 = await fetch("/api/showQuestion", {
                 method: "POST",
                 headers: {
@@ -166,6 +167,7 @@ export default function Home() {
             setRuntimePercentile(data2.runtimePercentile.toFixed(2));
             setMemoryPercentile(data2.memoryPercentile.toFixed(2));
             setLanguage(lang);
+            languageSelectRef.current.value = lang;
         }
     };
 
@@ -205,7 +207,7 @@ export default function Home() {
                   className="page-item"
               >
                   <div>{`${q.questionFrontendId}. ${
-                      q.status === Question_STATUS ? "✅" : "❌"
+                      q.status === SOLVED_STATUS ? "✅" : "❌"
                   } ${q.title}`}</div>{" "}
                   <div>
                       <span className={q.difficulty}>{`${q.difficulty}`}</span>{" "}
@@ -406,45 +408,62 @@ export default function Home() {
                 <ul className="question-list">{questionLi}</ul>
             </section>
 
-            <section id="question-detail">
-                <h3 className="underline">Question Details</h3>
-                <div className="question-container">{parse(question)}</div>
-            </section>
             <br />
 
-            <section id="editor">
-                <h3 className="underline">Code Editor</h3>
-                <select onChange={languageOnChangeHandler} className="mb-3">
-                    {languageOptionList}
-                </select>
-                {/* <div>{language}</div> */}
-                <Editor
-                    height="600px"
-                    // defaultLanguage={"javascript"}
-                    language={language}
-                    // defaultValue={code}
-                    value={code}
-                    onChange={(value) => setCode(value)}
-                    theme="vs-dark"
-                />
+            <button>Display column</button>
+            <section id="question-detail-and-editor" className="row">
+                <div className="col-12 col-xl-6">
+                    <h3 className="underline">Question Details</h3>
+                    <div className="question-container">{parse(question)}</div>
+                </div>
+                {/* <br /> */}
 
-                <br />
+                <div className="col-12 col-xl-6">
+                    <h3 className="underline">Code Editor</h3>
+                    <select
+                        onChange={languageOnChangeHandler}
+                        className="mb-3"
+                        ref={languageSelectRef}
+                    >
+                        {languageOptionList}
+                    </select>
+                    {/* <div>{language}</div> */}
+                    <Editor
+                        className="editor"
+                        height="80vh"
+                        // defaultLanguage={"javascript"}
+                        language={language}
+                        // defaultValue={code}
+                        value={code}
+                        onChange={(value) => setCode(value)}
+                        theme="vs-dark"
+                    />
 
-                <div className="d-flex justify-content-between">
-                    <div>
-                        <button onClick={runCode}>Run</button>
-                        <br />
-                        <button onClick={submitCode}>Submit to LeetCode</button>
-                    </div>
-                    <div>
+                    <br />
+
+                    <div className="d-flex justify-content-between">
                         <div>
-                            <b>Runtime beats:</b> {runtimePercentile}%
+                            <button onClick={runCode}>Run</button>
+                            <br />
+                            <button onClick={submitCode}>
+                                Submit to LeetCode
+                            </button>
                         </div>
                         <div>
-                            <b>Memory beats:</b> {memoryPercentile}%
+                            <div>
+                                <b>Runtime beats:</b> {runtimePercentile}%
+                            </div>
+                            <div>
+                                <b>Memory beats:</b> {memoryPercentile}%
+                            </div>
                         </div>
                     </div>
                 </div>
+            </section>
+
+            <br />
+
+            <section id="output">
                 <div className="container-xl pd-0">
                     <br />
                     <div className="row">

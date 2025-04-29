@@ -70,17 +70,33 @@ $Sub-background-color: #eae6d8;
         }
     }
 
-    .question-container {
-        // border: 1px solid black;
-        padding: 20px;
+    #question-detail-and-editor {
+        
+        > :nth-child(1) {
+            max-height: 100vh;
+            overflow: scroll;
+            position: relative;
 
-        p {
-            margin: 0;
+            h3 {
+                position: sticky;
+                top: 0;
+                background-color: $Sub-background-color;
+                z-index: 10;
+            }
         }
 
-        div.line {
-            width: 100%;
-            border-bottom: 1px solid $Border-color;
+        .question-container {
+            // border: 1px solid black;
+            // padding: 20px;
+
+            p {
+                margin: 0;
+            }
+
+            div.line {
+                width: 100%;
+                border-bottom: 1px solid $Border-color;
+            }
         }
     }
 
