@@ -177,9 +177,25 @@ export async function GET(res) {
         // console.log(process.env.COOKIE);
 
         const data = await response.json();
+        const questions = data.data.problemsetQuestionListV2.questions;
+        const categories = new Map();
+        categories.set("all", questions.length);
+
+        for (let q of questions) {
+            let topic = q.topicTags[0].slug;
+
+            if (categories.get(topic) == null) {
+                categories.set(topic, 1);
+            } else {
+                categories.set(topic, categories.get(topic) + 1);
+            }
+        }
 
         return new Response(
-            JSON.stringify(data.data.problemsetQuestionListV2),
+            JSON.stringify({
+                questions,
+                categories: Object.fromEntries(categories),
+            }),
             {
                 status: 200,
             }

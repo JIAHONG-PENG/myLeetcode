@@ -11,14 +11,15 @@ export default function Home() {
     // const [output, setOutput] = useState("");
 
     const [username, setUsername] = useState();
+    const [allQuestions, setAllQuestions] = useState([]);
     const [questions, setQuestions] = useState([]);
+    const [categories, setCategories] = useState({});
     const [currentQuestions, setCurrentQuestions] = useState([]);
 
     const [question, setQuestion] = useState("");
     const [questionMeta, setQuestionMeta] = useState({});
     const [aiAnswer, setAiAnswer] = useState("");
 
-    // const [pages, setPages] = useState([1]);
     const [currentPage, setCurrentPage] = useState(1);
     const [maxPage, setMaxPage] = useState(1);
     const [submissionResult, setSubmissionResult] = useState("");
@@ -58,15 +59,15 @@ export default function Home() {
         }
 
         inputRef.current.value = currentPage;
-    }, [currentPage]);
+    }, [currentPage, questions]);
 
-    useEffect(() => {
-        if (Array.isArray(questions)) {
-            setCurrentQuestions(
-                questions.slice((currentPage - 1) * 20, currentPage * 20)
-            );
-        }
-    }, [questions]);
+    // useEffect(() => {
+    //     if (Array.isArray(questions)) {
+    //         setCurrentQuestions(
+    //             questions.slice((currentPage - 1) * 20, currentPage * 20)
+    //         );
+    //     }
+    // }, [questions]);
 
     const languageOptionList = LANGUAGES.map((lan, index) => (
         <option value={lan} key={index}>
@@ -78,8 +79,29 @@ export default function Home() {
         setLanguage(event.target.value);
     }
 
+    const categoryOnClickHandler = (event) => {
+        if (event.target.id == "all") {
+            setQuestions(allQuestions);
+            setCurrentPage(1);
+            setMaxPage(Math.ceil(allQuestions.length / 20));
+        } else {
+            const topicSlug = event.target.id;
+            let newQuestions = [];
+
+            for (const q of allQuestions) {
+                if (q.topicTags[0].slug == topicSlug) {
+                    newQuestions.push(q);
+                }
+            }
+
+            setQuestions(newQuestions);
+            setCurrentPage(1);
+            setMaxPage(Math.ceil(newQuestions.length / 20));
+        }
+    };
+
     const questionOnClickHandler = async (id, event) => {
-        const questoinSelected = questions[id - 1];
+        const questoinSelected = allQuestions[id - 1];
 
         const res = await fetch("/api/showQuestion", {
             method: "POST",
@@ -211,10 +233,18 @@ export default function Home() {
                   } ${q.title}`}</div>{" "}
                   <div>
                       <span className={q.difficulty}>{`${q.difficulty}`}</span>{" "}
-                      {`(${q.acRate.toFixed(2)}%)`}
+                      {`(${(q.acRate * 100).toFixed(0)}%)`}
                   </div>
               </li>
           ));
+
+    const categoryLi = Object.entries(categories).map(([key, value], index) => (
+        <li
+            key={index}
+            id={key}
+            onClick={categoryOnClickHandler}
+        >{`${key} (${value})`}</li>
+    ));
 
     const handleGetQuestions = async (event) => {
         const res = await fetch("/api/getQuestions", {
@@ -228,6 +258,8 @@ export default function Home() {
 
         if (!data.error) {
             setQuestions(data.questions);
+            setAllQuestions(data.questions);
+            setCategories(data.categories);
             setMaxPage(Math.ceil(data.questions.length / 20));
             inputRef.current.value = 1;
 
@@ -361,6 +393,9 @@ export default function Home() {
             <section id="questions">
                 <h3 className="underline">Question List</h3>
                 <button onClick={handleGetQuestions}>Get questions</button>
+
+                <ul className="question-category">{categoryLi}</ul>
+
                 <nav aria-label="Page navigation" className="page-navigation">
                     <ul className="pagination">
                         <li
