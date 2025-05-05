@@ -19,6 +19,8 @@ export default function Home() {
     const [question, setQuestion] = useState("");
     const [questionMeta, setQuestionMeta] = useState({});
     const [aiAnswer, setAiAnswer] = useState("");
+    const [solutions, setSolutions] = useState([]);
+    const [solution, setSolution] = useState({ content: "", title: "" });
 
     const [currentPage, setCurrentPage] = useState(1);
     const [maxPage, setMaxPage] = useState(1);
@@ -33,6 +35,16 @@ export default function Home() {
 
     const inputRef = useRef();
     const languageSelectRef = useRef();
+
+    const POST = async function (url, body) {
+        return await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(body),
+        });
+    };
 
     useEffect(() => {
         async function authenticate() {
@@ -75,6 +87,21 @@ export default function Home() {
         </option>
     ));
 
+    const handleGetSolution = async (event) => {
+        const res = await POST("/api/getSolution", {
+            topicId: event.target.id,
+        });
+        const data = await res.json();
+        console.log(data.content);
+        setSolution(data);
+    };
+
+    const solutionsLi = solutions.map(({ topicId, title }, index) => (
+        <li key={index} id={topicId} onClick={handleGetSolution}>
+            {title}
+        </li>
+    ));
+
     function languageOnChangeHandler(event) {
         setLanguage(event.target.value);
     }
@@ -89,8 +116,13 @@ export default function Home() {
             let newQuestions = [];
 
             for (const q of allQuestions) {
-                if (q.topicTags[0].slug == topicSlug) {
-                    newQuestions.push(q);
+                for (let topic of q.topicTags) {
+                    topic = topic.slug;
+
+                    if (topic == topicSlug) {
+                        newQuestions.push(q);
+                        break;
+                    }
                 }
             }
 
@@ -151,7 +183,7 @@ export default function Home() {
                 },
                 body: JSON.stringify({
                     id: id,
-                    titleSlug: questions[id - 1].titleSlug,
+                    titleSlug: questoinSelected.titleSlug,
                     code: true,
                 }),
             });
@@ -320,6 +352,15 @@ export default function Home() {
         }
     };
 
+    const handleGetAllSolutions = async () => {
+        const res = await POST("/api/getSolutions", {
+            questionSlug: questionMeta.titleSlug,
+        });
+        const data = await res.json();
+
+        setSolutions(data.solutionTitles);
+    };
+
     const askAiButtonOnClick = async () => {
         if (question !== "") {
             const response = await ai.models.generateContent({
@@ -421,6 +462,15 @@ export default function Home() {
                                     className="page-link no-spinner"
                                     defaultValue={currentPage}
                                 />
+                                <div className="cursor-default">
+                                    &nbsp;...&nbsp;
+                                </div>
+                                <input
+                                    type="number"
+                                    value={maxPage}
+                                    disabled
+                                    className="page-link no-spinner"
+                                />
                                 <button type="submit" className="">
                                     Go
                                 </button>
@@ -483,6 +533,10 @@ export default function Home() {
                             <button onClick={submitCode}>
                                 Submit to LeetCode
                             </button>
+                            <br />
+                            <button onClick={handleGetAllSolutions}>
+                                Get Solutions
+                            </button>
                         </div>
                         <div>
                             <div>
@@ -505,10 +559,16 @@ export default function Home() {
                         <div className="col-md-6 col-12">
                             <h4>Output:</h4>
                             <pre className="output">{submissionResult}</pre>
+
+                            <ol className="solutions">{solutionsLi}</ol>
                         </div>
                         <div className="col-md-6 col-12">
                             <button onClick={askAiButtonOnClick}>Ask AI</button>
                             <div className="ai-answer-box">{aiAnswer}</div>
+
+                            <div className="solution">
+                                {solution.content.replace(/\\n/g, "\n")}
+                            </div>
                         </div>
                     </div>
                 </div>

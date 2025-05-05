@@ -75,11 +75,13 @@ const graphql = {
     query: " query problemsetQuestionList($categorySlug: String, $limit: Int, $skip: Int, $filters: QuestionListFilterInput) {  problemsetQuestionList: questionList(    categorySlug: $categorySlug    limit: $limit    skip: $skip    filters: $filters  ) {    total: totalNum    questions: data {      acRate   difficulty  frontendQuestionId: questionFrontendId     paidOnly: isPaidOnly      status      title      titleSlug   }  } }   ",
 };
 
+const LIMIT = 200;
+
 const graphqlV2 = {
     query: "    query problemsetQuestionListV2($filters: QuestionFilterInput, $limit: Int, $searchKeyword: String, $skip: Int, $sortBy: QuestionSortByInput, $categorySlug: String) {  problemsetQuestionListV2(    filters: $filters    limit: $limit    searchKeyword: $searchKeyword    skip: $skip    sortBy: $sortBy    categorySlug: $categorySlug  ) {    questions {      id      titleSlug      title      translatedTitle      questionFrontendId      paidOnly      difficulty      topicTags {        name        slug        nameTranslated      }      status      isInMyFavorites      frequency      acRate    }    totalLength    finishedLength    hasMore  }}    ",
     variables: {
         skip: 0,
-        limit: 100,
+        limit: LIMIT,
         categorySlug: "all-code-essentials",
         filters: {
             filterCombineType: "ALL",
@@ -182,12 +184,14 @@ export async function GET(res) {
         categories.set("all", questions.length);
 
         for (let q of questions) {
-            let topic = q.topicTags[0].slug;
+            for (let topic of q.topicTags) {
+                topic = topic.slug;
 
-            if (categories.get(topic) == null) {
-                categories.set(topic, 1);
-            } else {
-                categories.set(topic, categories.get(topic) + 1);
+                if (categories.get(topic) == null) {
+                    categories.set(topic, 1);
+                } else {
+                    categories.set(topic, categories.get(topic) + 1);
+                }
             }
         }
 

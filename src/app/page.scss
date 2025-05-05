@@ -13,19 +13,20 @@ $Sub-background-color: #eae6d8;
     border: 2px solid $Border-color;
     background-color: $Sub-background-color;
 
-
-    // h2, h3 {
-    //     text-shadow: 2px 2px lightgray;
+    
+    // li {
+    //     list-style: none;
     // }
+    li:hover {
+        // background-color: lightgray;
+        background-color: #4a3f35;
+        color: $Background-color;
+    }
 
     .underline {
         border-bottom: 2px $Border-color solid;
     }
 
-    // button, .page-link, select {
-    //     box-shadow: 2px 2px black;
-    //     color: black;
-    // }
 
     .heading {
         position: relative;
@@ -39,23 +40,13 @@ $Sub-background-color: #eae6d8;
 
     #questions {
         .question-list {
-            // background: white;
-            // border: 1px solid black;
-            list-style: none;
-            
     
             li {
                 white-space: pre;
                 display: flex;
                 justify-content: space-between;
-    
                 cursor: pointer;
-                padding: 2px    ;
-            }
-            li:hover {
-                // background-color: lightgray;
-                background-color: #4a3f35;
-                color: $Background-color;
+                padding: 2px;
             }
     
             .EASY {
@@ -72,7 +63,7 @@ $Sub-background-color: #eae6d8;
         }
 
         .question-category {
-            list-style: none;
+            
             li {
                 display: inline;
                 margin-right: 1rem;
@@ -111,16 +102,30 @@ $Sub-background-color: #eae6d8;
         }
     }
 
-    .output {
-        margin-bottom: 150px;
-    }
+    #output {
+        .output {
+            margin-bottom: 150px;
+        }
 
-    .ai-answer-box {
-        border: 1px solid $Border-color;
-        min-height: 300px;
-        margin-bottom: 50px;
-        margin-top: 20px;
-        padding: 10px;
+        .solutions {
+            li {
+                cursor: pointer;
+                padding: 2px;
+            }
+        }
+    
+        .ai-answer-box {
+            border: 1px solid $Border-color;
+            min-height: 300px;
+            margin-bottom: 50px;
+            margin-top: 20px;
+            padding: 10px;
+        }
+
+        .solution {
+            white-space: pre-line;
+            white-space: pre-wrap;
+        }
     }
 
     .pd-0 {
@@ -150,7 +155,6 @@ $Sub-background-color: #eae6d8;
 
             input {
                 width: 50px;
-                padding: 6px;
                 text-align: center;
             }
 
@@ -161,6 +165,10 @@ $Sub-background-color: #eae6d8;
 
             span, input {
                 color: $color;
+            }
+
+            .cursor-default {
+                cursor: default;
             }
         }
     }
