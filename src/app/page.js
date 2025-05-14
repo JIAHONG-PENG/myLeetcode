@@ -46,6 +46,33 @@ export default function Home() {
         });
     };
 
+    function decodeEscapedString(str) {
+        return (
+            str
+                // Decode \uXXXX unicode
+                .replace(/\\u[\dA-Fa-f]{4}/g, (match) =>
+                    String.fromCharCode(parseInt(match.slice(2), 16))
+                )
+                // Decode \xXX hex escapes
+                .replace(/\\x[0-9A-Fa-f]{2}/g, (match) =>
+                    String.fromCharCode(parseInt(match.slice(2), 16))
+                )
+                // Replace escaped newlines
+                .replace(/\\n/g, "\n")
+                // Replace escaped single quotes
+                .replace(/\\'/g, "'")
+                // Replace escaped double quotes
+                .replace(/\\"/g, '"')
+                // Replace escaped backslashes
+                .replace(/\\\\/g, "\\")
+                // Replace <br> with newlines
+                .replace(/<br\s*\/?>/gi, "\n")
+                // Replace actual non-breaking space characters
+                .replace(/\u00A0/g, " ")
+                .replace(/\xa0/g, " ")
+        );
+    }
+
     useEffect(() => {
         async function authenticate() {
             const res = await fetch("/api/authUser", {
@@ -92,7 +119,7 @@ export default function Home() {
             topicId: event.target.id,
         });
         const data = await res.json();
-        console.log(data.content);
+        data.content = decodeEscapedString(data.content);
         setSolution(data);
     };
 
@@ -566,9 +593,7 @@ export default function Home() {
                             <button onClick={askAiButtonOnClick}>Ask AI</button>
                             <div className="ai-answer-box">{aiAnswer}</div>
 
-                            <div className="solution">
-                                {solution.content.replace(/\\n/g, "\n")}
-                            </div>
+                            <div className="solution">{solution.content}</div>
                         </div>
                     </div>
                 </div>
