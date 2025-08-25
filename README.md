@@ -1,4 +1,4 @@
-## This is a leetcode pratice app which enables Google GenAI
+## This is a leetcode pratice app which enables Google GenAI (Next.js)
 
 <img width="776" alt="image" src="https://github.com/user-attachments/assets/f0a2fe1a-f7bc-4a67-8eef-a0a68946bfda" />
 <img width="779" alt="image" src="https://github.com/user-attachments/assets/3f4ac500-643b-4204-81a4-08f552709dfa" />
