@@ -1,0 +1,37 @@
+version: "3.9"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: myleetcode-app
+    environment:
+      NODE_ENV: production
+      # Add server-side env vars here (no NEXT_PUBLIC_ prefix).
+      # DB_HOST: ...
+      # DB_USER: ...
+      # DB_PASS: ...
+      # OPENAI_API_KEY: ...
+      # GOOGLE_GENAI_API_KEY: ...
+    expose:
+      - "3000"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://127.0.0.1:3000', r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: myleetcode-nginx
+    ports:
+      - "80:80"
+      # For TLS in prod, map 443 and add cert config:
+      # - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - app
+    restart: unless-stopped
